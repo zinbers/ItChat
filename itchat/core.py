@@ -1,5 +1,6 @@
 import requests
-
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util import Retry
 from . import storage
 from .components import load_components
 
@@ -23,6 +24,7 @@ class Core(object):
         self.msgList = self.storageClass.msgList
         self.loginInfo = {}
         self.s = requests.Session()
+        self.s.mount('https://', HTTPAdapter(max_retries=Retry(total=5, method_whitelist=frozenset(['GET', 'POST']))))
         self.uuid = None
         self.functionDict = {'FriendChat': {}, 'GroupChat': {}, 'MpChat': {}}
         self.useHotReload, self.hotReloadDir = False, 'itchat.pkl'
